@@ -1,5 +1,7 @@
 namespace BugIssuesTrackerApi.BugIssuesTracker.Data.Models;
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 public class Users
 {
     public int Id { get; set; }
@@ -10,4 +12,7 @@ public class Users
     public int RoleId { get; set; }
     public string? AvatarUrl { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    [ForeignKey("RoleId")]
+    public Role? Role { get; set; }
 }

@@ -24,6 +24,14 @@ namespace BugIssuesTrackerApi.BugIssuesTracker.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProjectMembers>().HasKey(pm => new { pm.ProjectId, pm.UserId });
+
+            modelBuilder
+                .Entity<Role>()
+                .HasData(
+                    new Role { Id = (int)UserRole.Admin, Name = nameof(UserRole.Admin) },
+                    new Role { Id = (int)UserRole.Developer, Name = nameof(UserRole.Developer) },
+                    new Role { Id = (int)UserRole.Reporter, Name = nameof(UserRole.Reporter) }
+                );
         }
     }
 }
