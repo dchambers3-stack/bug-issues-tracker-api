@@ -1,10 +1,12 @@
 using System.Text;
 using BugIssuesTrackerApi.BugIssuesTracker.Data;
 using BugTracker.Api.Behaviors;
+using BugTracker.Api.Middleware;
 using BugTracker.Api.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,6 +36,8 @@ namespace BugIssuesTrackerApi.BugIssuesTracker
                 typeof(IPipelineBehavior<,>),
                 typeof(ValidationBehavior<,>)
             );
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
             builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
@@ -60,7 +64,13 @@ namespace BugIssuesTrackerApi.BugIssuesTracker
                 });
 
             builder.Services.AddAuthorization();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                // Without this, ASP.NET Core writes bare `string` action results
+                // (e.g. the JWT from login/register) as unquoted text/plain, which
+                // Angular's HttpClient (responseType: 'json') fails to JSON.parse.
+                options.OutputFormatters.RemoveType<StringOutputFormatter>();
+            });
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddDbContext<BugIssuesTrackerContext>(options =>
@@ -88,6 +98,8 @@ namespace BugIssuesTrackerApi.BugIssuesTracker
             {
                 app.MapOpenApi();
             }
+
+            app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
 

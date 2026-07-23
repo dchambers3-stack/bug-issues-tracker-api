@@ -1,3 +1,4 @@
+using System.Net;
 using FluentValidation;
 using MediatR;
 
@@ -26,13 +27,14 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             _validators.Select(v => v.ValidateAsync(request, ct))
         );
 
-        var failures = validationResults
-            .SelectMany(r => r.Errors)
-            .Where(f => f != null)
-            .ToList();
+        var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
 
         if (failures.Count > 0)
-            throw new ValidationException(failures);
+            throw new HttpRequestException(
+                $"{string.Join(", ", failures.Select(f => f.ErrorMessage))}",
+                null,
+                HttpStatusCode.BadRequest
+            );
 
         return await next();
     }

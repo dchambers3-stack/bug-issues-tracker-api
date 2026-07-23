@@ -7,14 +7,14 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BugIssuesTrackerApi.BugIssuesTracker.BusinessLogic.Commands.UserRegistrationRequest;
+namespace BugIssuesTrackerApi.BugIssuesTracker.BusinessLogic.Commands.Auth;
 
 public record UserRegistrationRequest(string Username, string Email, string Password)
-    : IRequest<int>;
+    : IRequest<string>;
 
 // Handler
 
-public class UserRegistrationHandler : IRequestHandler<UserRegistrationRequest, int>
+public class UserRegistrationHandler : IRequestHandler<UserRegistrationRequest, string>
 {
     private readonly BugIssuesTrackerContext _context;
     private readonly ITokenService _tokenService;
@@ -26,7 +26,7 @@ public class UserRegistrationHandler : IRequestHandler<UserRegistrationRequest, 
         _tokenService = tokenService;
     }
 
-    public async Task<int> Handle(
+    public async Task<string> Handle(
         UserRegistrationRequest request,
         CancellationToken cancellationToken
     )
@@ -50,7 +50,7 @@ public class UserRegistrationHandler : IRequestHandler<UserRegistrationRequest, 
 
         var token = _tokenService.GenerateToken(user);
 
-        return user.Id;
+        return token;
 
         // I'm returning the Id here to not expose token and user information.
     }
