@@ -34,11 +34,19 @@ public class AuthorizeRequestHandler : IRequestHandler<AuthorizeRequest, Current
         var role = _currentUserService.Role;
         var query = await _context
             .Users.Where(u => u.Id == userId)
-            .Select(u => new { u.Username, u.Role })
+            .Select(u => new
+            {
+                u.Username,
+                u.Role,
+                u.FirstName,
+                u.LastName,
+            })
             .FirstOrDefaultAsync(cancellationToken);
 
         var response = new CurrentUserDto
         {
+            FirstName = query?.FirstName,
+            LastName = query?.LastName,
             UserId = userId,
             Username = query?.Username,
             Role = query?.Role?.Name,

@@ -9,8 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BugIssuesTrackerApi.BugIssuesTracker.BusinessLogic.Commands.Auth;
 
-public record UserRegistrationRequest(string Username, string Email, string Password)
-    : IRequest<string>;
+public record UserRegistrationRequest(
+    string FirstName,
+    string LastName,
+    string Email,
+    string Username,
+    string Password
+) : IRequest<string>;
 
 // Handler
 
@@ -32,12 +37,14 @@ public class UserRegistrationHandler : IRequestHandler<UserRegistrationRequest, 
     )
     {
         var defaultRole = await _context.Roles.FindAsync(
-            [2], // Assuming 2 is the default role for new users
+            2, // Assuming 2 is the default role for new users
             cancellationToken
         );
 
         var user = new Users
         {
+            FirstName = request.FirstName,
+            LastName = request.LastName,
             Username = request.Username,
             Email = request.Email,
             RoleId = 2, // Assuming 2 is the default role for new users
@@ -53,6 +60,11 @@ public class UserRegistrationHandler : IRequestHandler<UserRegistrationRequest, 
         return token;
 
         // I'm returning the Id here to not expose token and user information.
+    }
+
+    public async Task<string> GetInitials(string firstName, string lastName)
+    {
+        return $"{firstName[0]}{lastName[0]}".ToUpper();
     }
 }
 

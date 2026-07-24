@@ -3,6 +3,7 @@ using System;
 using BugIssuesTrackerApi.BugIssuesTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BugIssuesTracker.Migrations
 {
     [DbContext(typeof(BugIssuesTrackerContext))]
-    partial class BugIssuesTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20260724033038_First, Last Names, and initials")]
+    partial class FirstLastNamesandinitials
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");

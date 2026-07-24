@@ -8,7 +8,9 @@ public class Users
     public string Username { get; set; } = "";
     public string Email { get; set; } = "";
     public string PasswordHash { get; set; } = "";
-
+    public string FirstName { get; set; } = "";
+    public string LastName { get; set; } = "";
+    public string Initials { get; set; } = "";
     public int RoleId { get; set; }
     public string? AvatarUrl { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
